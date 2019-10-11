@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Browser as Router, Switch, Route } from 'react-router-dom';
+//import { Browser as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layouts/Navbar';
+import Alert from './components/layouts/Alert';
 import Users from './components/users/Users';
 import Search from './components/users/Search';
 import axios from 'axios';
@@ -11,7 +12,8 @@ class App extends Component {
 
   state = {
     users: [],
-    loading: false
+    loading: false,
+    alert: null
   }
 
 
@@ -26,6 +28,8 @@ class App extends Component {
    }*/
 
   searchUsers = async (text) => {
+    this.setState({loading:true});
+    
     const res = await axios.get(
       `https://api.github.com/search/users?q=${text}&client_id=${
       process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${
@@ -35,12 +39,16 @@ class App extends Component {
     this.setState({ users: res.data.items, loading: false });
   };
   //teste commit
-  
-  clearUsers = () => this.setState({users:[], loading:false});
+
+  clearUsers = () => this.setState({ users: [], loading: false });
+  setAlert = (msg, type) => {
+    this.setState({ alert: { msg, type } });
+    setTimeout(()=> this.setState({alert:null}), 4000);
+  }
 
   render() {
 
-    const {users, loading} = this.state;
+    const { users, loading, alert } = this.state;
     return (
       <div className='App'>
 
@@ -48,11 +56,12 @@ class App extends Component {
 
 
         <div className='container'>
-
+          <Alert alert={alert} />
           <Search
             searchUsers={this.searchUsers}
             clearUsers={this.clearUsers}
-            showClear={users.length > 0 ? true : false }
+            showClear={users.length > 0 ? true : false}
+            setAlert={this.setAlert}
           />
 
           <Users loading={loading} users={users} />
