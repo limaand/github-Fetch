@@ -1,17 +1,22 @@
 import React, { Component, Fragment } from 'react';
+import Repos  from '../repos/Repos';
 import Spinner from '../layouts/Spinner';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+
 export class User extends Component {
     componentDidMount() {
         this.props.getUser(this.props.match.params.login);
+        this.props.getUserRepos(this.props.match.params.login);
     }
 
     static propTypes = {
         loading: PropTypes.bool,
         user: PropTypes.func.isRequired,
-        getUser: PropTypes.func.isRequired
+        repos: PropTypes.array.isRequired,
+        getUser: PropTypes.func.isRequired,
+        getUserRepos: PropTypes.func.isRequired,
     }
 
 
@@ -33,7 +38,7 @@ export class User extends Component {
 
         } = this.props.user;
 
-        const { loading } = this.props;
+        const { loading, repos } = this.props;
         if (loading)
             return <Spinner />;
 
@@ -70,28 +75,28 @@ export class User extends Component {
                         </a>
 
                         <ul>
-                          <li>
-                             {login && 
-                             <Fragment>
-                                 <strong>Username:</strong> {login}
-                             </Fragment>}
+                            <li>
+                                {login &&
+                                    <Fragment>
+                                        <strong>Username:</strong> {login}
+                                    </Fragment>}
 
-                          </li>
-                          <li>
-                             {company && 
-                             <Fragment>
-                                 <strong>Company:</strong> {company}
-                             </Fragment>}
+                            </li>
+                            <li>
+                                {company &&
+                                    <Fragment>
+                                        <strong>Company:</strong> {company}
+                                    </Fragment>}
 
-                          </li>
+                            </li>
 
-                          <li>
-                             {blog && 
-                             <Fragment>
-                                 <strong>Website:</strong> {blog}
-                             </Fragment>}
+                            <li>
+                                {blog &&
+                                    <Fragment>
+                                        <strong>Website:</strong> {blog}
+                                    </Fragment>}
 
-                          </li>
+                            </li>
 
                         </ul>
                     </div>
@@ -99,12 +104,15 @@ export class User extends Component {
 
 
                 <div className="card text-center">
-                 <div className="badge badge-primary"> Followers: {followers}</div> 
-                 <div className="badge badge-success"> Following: {following}</div> 
-                 <div className="badge badge-danger"> Public Repos: {public_repos}</div> 
-                 <div className="badge badge-dark"> Public Gists: {public_gists}</div>  
+                    <div className="badge badge-primary"> Followers: {followers}</div>
+                    <div className="badge badge-success"> Following: {following}</div>
+                    <div className="badge badge-danger"> Public Repos: {public_repos}</div>
+                    <div className="badge badge-dark"> Public Gists: {public_gists}</div>
 
                 </div>
+
+                <Repos repos={repos} />
+
             </Fragment>
         )
     }
